@@ -1,0 +1,251 @@
+import React, { useState } from 'react';
+import { 
+  FileSpreadsheet, 
+  FileText, 
+  MessageSquare, 
+  Bot, 
+  Copy, 
+  Check, 
+  ChevronRight, 
+  AlertCircle,
+  TrendingUp,
+  BrainCircuit,
+  PieChart,
+  Scale // Added Scale icon for Reconciliation
+} from 'lucide-react';
+
+const DemoStep = ({ step, title, problem, tool, prompt, icon: Icon, isLast }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    // Fallback for iframe/restricted environments where navigator.clipboard might be blocked
+    try {
+        const textArea = document.createElement("textarea");
+        textArea.value = prompt;
+        
+        // Ensure it's not visible but part of DOM to allow selection
+        textArea.style.position = "fixed";
+        textArea.style.left = "-9999px";
+        textArea.style.top = "0";
+        document.body.appendChild(textArea);
+        
+        textArea.focus();
+        textArea.select();
+        
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+        
+        if (successful) {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        }
+    } catch (err) {
+        console.error('Unable to copy', err);
+    }
+  };
+
+  return (
+    <div className="flex gap-4 md:gap-8 relative pb-12">
+      {/* Timeline Line */}
+      {!isLast && (
+        <div className="absolute left-6 top-14 bottom-0 w-0.5 bg-slate-200" />
+      )}
+
+      {/* Icon Bubble */}
+      <div className="flex-shrink-0">
+        <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg z-10 relative">
+          <Icon size={24} />
+        </div>
+      </div>
+
+      {/* Content Card */}
+      <div className="flex-grow">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow duration-300">
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                Step {step}
+              </span>
+              <span className="text-slate-400 text-sm font-medium flex items-center gap-1">
+                {tool}
+              </span>
+            </div>
+            
+            <h3 className="text-xl font-bold text-slate-800 mb-2">{title}</h3>
+            
+            <div className="mb-4 bg-red-50 border-l-4 border-red-400 p-3 rounded-r-md">
+              <h4 className="text-xs font-bold text-red-500 uppercase mb-1">The Problem</h4>
+              <p className="text-sm text-slate-700">{problem}</p>
+            </div>
+
+            <div className="bg-slate-900 rounded-lg p-4 relative group">
+              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button 
+                  onClick={handleCopy}
+                  className="p-1.5 bg-white/10 hover:bg-white/20 text-white rounded-md transition-colors"
+                  title="Copy Prompt"
+                >
+                  {copied ? <Check size={16} className="text-green-400" /> : <Copy size={16} />}
+                </button>
+              </div>
+              <h4 className="text-xs font-bold text-slate-400 uppercase mb-2">The Prompt</h4>
+              <p className="text-slate-100 font-mono text-sm leading-relaxed whitespace-pre-wrap">
+                {prompt}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default function AdvantisDemo() {
+  const [activeTab, setActiveTab] = useState('flow');
+
+  return (
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
+      {/* Header */}
+      <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-700 rounded-lg flex items-center justify-center text-white font-bold text-xl">
+              A
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-slate-900 leading-tight">Advantis Copilot Session</h1>
+              <p className="text-xs text-slate-500">From Data to Decisions</p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button 
+              onClick={() => setActiveTab('scenario')}
+              className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${activeTab === 'scenario' ? 'bg-blue-100 text-blue-700' : 'text-slate-600 hover:bg-slate-100'}`}
+            >
+              The Scenario
+            </button>
+            <button 
+              onClick={() => setActiveTab('flow')}
+              className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${activeTab === 'flow' ? 'bg-blue-100 text-blue-700' : 'text-slate-600 hover:bg-slate-100'}`}
+            >
+              Demo Flow
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-4xl mx-auto px-4 py-8">
+        
+        {activeTab === 'scenario' && (
+          <div className="animate-fade-in space-y-6">
+            <div className="bg-white p-8 rounded-xl shadow-sm border border-slate-200">
+              <div className="flex items-center gap-3 mb-6">
+                <AlertCircle className="text-red-500" size={32} />
+                <h2 className="text-2xl font-bold text-slate-800">The 4:30 PM Panic</h2>
+              </div>
+              
+              <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 font-serif">
+                <div className="border-b border-slate-200 pb-4 mb-4 text-sm text-slate-600 space-y-1">
+                  <p><span className="font-bold text-slate-800">From:</span> Suresh Perera (CFO)</p>
+                  <p><span className="font-bold text-slate-800">To:</span> Sahan (Head of Logistics Analytics)</p>
+                  <p><span className="font-bold text-slate-800">Subject:</span> <span className="text-red-600 font-bold">URGENT:</span> Q4 Profitability Breakdown needed for Board Deck</p>
+                  <p><span className="font-bold text-slate-800">Time:</span> Today, 4:28 PM</p>
+                </div>
+                <div className="space-y-4 text-slate-800 leading-relaxed">
+                  <p>Sahan,</p>
+                  <p>I just got out of the Pre-Board meeting. The Directors are drilling down on our logistics margins. They believe we are bleeding profit on the "Heavy Cargo" segment and want to see the numbers immediately.</p>
+                  <p>I need a deep-dive analysis on the Q4 export data by <strong>5:00 PM today</strong>.</p>
+                  <p>Specifically, I need:</p>
+                  <ul className="list-disc pl-5 space-y-1">
+                    <li>A profitability breakdown grouped by <strong>Weight Bracket</strong>.</li>
+                    <li>A <strong>Heatmap</strong> showing our route density.</li>
+                    <li>A clear split of <strong>System Rates vs. SPOT Rates</strong>.</li>
+                    <li><strong>Reconcile the latest Bank Dump against our Pending Invoices list.</strong> (I saw discrepancies).</li>
+                    <li>A list of any <strong>New Customers</strong> acquired after May 2025.</li>
+                  </ul>
+                  <p>Don't spend time formatting a report. Just generate the visualizations and send them over.</p>
+                  <p>Thanks,<br/>Suresh</p>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end">
+                <button 
+                  onClick={() => setActiveTab('flow')}
+                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                >
+                  Start The Magic <ChevronRight size={18} />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'flow' && (
+          <div className="animate-fade-in pt-4">
+            <DemoStep 
+              step="1"
+              title="The Complex Analysis"
+              problem="CFO wants Heatmaps, Profit by Weight, and Rate splits. Normally requires manual Python coding or complex Pivot tables."
+              tool="Excel + Python"
+              icon={PieChart}
+              prompt="Use Python. Analyze this dataset and generate the following visualizations: 1. A grouped bar chart of Revenue_Amount, Cost_Amount, and Profit_Amount by Weight_Bracket. 2. A heatmap showing the count of shipments between Origin_City and Destination_Country. 3. A pie chart showing the percentage of 'System' vs 'SPOT' rates for shipments over 20kg. Output these visualizations to the sheet."
+            />
+
+            <DemoStep 
+              step="2"
+              title="The Financial Forecast"
+              problem="We spotted a margin issue on the Singapore route. Is it a blip, or a trend?"
+              tool="Excel + Python"
+              icon={TrendingUp}
+              prompt="Use Python to forecast the 'Fuel_Surcharge_USD' for the next 3 months based on the historical trend in this table. Visualize the forecast with a confidence interval graph."
+            />
+
+            <DemoStep 
+              step="3"
+              title="The Reconciliation Nightmare"
+              problem="Finance team spends hours manually matching Invoice IDs to Bank Transaction Reference numbers to find missing payments."
+              tool="Excel Copilot"
+              icon={Scale}
+              prompt="Reconcile the 'Invoices' table against the 'Bank_Transactions' table. Match based on 'Invoice_ID' and 'Transaction_Ref'. Highlight any payments where the amounts do not match or where the Invoice ID is missing in the Bank Data."
+            />
+
+            <DemoStep 
+              step="4"
+              title="The Board Report"
+              problem="We need to translate raw charts into a formal 'Financial Risk Assessment' document."
+              tool="Word + Copilot"
+              icon={FileText}
+              prompt="Draft a 'Financial Risk Assessment' based on this file. Specifically focus on the rising Fuel Surcharge trend we identified. Explain that while volume is up, margin pressure is increasing on the Singapore route. Conclude with a recommendation to renegotiate 'System' rates."
+            />
+
+            <DemoStep 
+              step="5"
+              title="The Market Validation"
+              problem="Is this just an Advantis problem? We need to check global market trends."
+              tool="M365 BizChat"
+              icon={MessageSquare}
+              prompt="Act as a Supply Chain Researcher. Search for 'Global bunker fuel price trends Q1 2026' and 'Red Sea logistics disruptions'. Correlate this with our internal findings on rising Singapore route costs."
+            />
+
+            <DemoStep 
+              step="6"
+              title="The Custom Agent"
+              problem="How do we help the team track this live tomorrow without calling IT?"
+              tool="Copilot Studio"
+              icon={Bot}
+              isLast={true}
+              prompt="(Natural Language Test): Where is shipment ADV-1052? Is it affected by the fuel hike?"
+            />
+            
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-8 text-center mt-8">
+              <BrainCircuit className="mx-auto text-blue-600 mb-4" size={48} />
+              <h3 className="text-xl font-bold text-slate-800 mb-2">Demo Complete</h3>
+              <p className="text-slate-600">From Panic to Product to Platform in &lt; 35 minutes.</p>
+            </div>
+          </div>
+        )}
+
+      </main>
+    </div>
+  );
+}
